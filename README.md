@@ -61,13 +61,87 @@ Verify server is up and accessible.
 * Path: `/api/ping`
 * Method: `GET`
 * Required Params: None
-* Returns: JSON
+* Returns on success: JSON, `200 OK`
 
 ```json
 {"status": "ok"}
 ```
 
-WIP
+### Create device readings
+
+Insert one or more new count/timestamp readings for a specified device.
+
+* Path: `/api/device-readings/create`
+* Method: `POST`
+* Required body (JSON):
+    * `id` - String, UUID4 format. Represents device ID. Ex: `"063c5957-8905-45f9-bfe3-960713788919"`
+    * `readings` - Array of one or more reading dictionaries
+        * `readings.count` - Integer, must be positive. Ex: `9`
+        * `readings.timestamp` - String of ISO-8061 timestamp: `%Y-%m-%dT%H:%M:%S%z`. Ex: `"2021-09-29T16:09:15+01:00"`
+* Returns on success: JSON, `201 Created`
+
+```json
+{"status": "ok"}
+```
+
+* Returns on error: JSON, status code varies (also included in response body)
+
+```json
+{
+    "status": "error",
+    "error_message": "Explanation of specific error",
+    "status_code": 400
+}
+```
+
+
+### Retrieve device latest timestamp
+
+Retrieve a target device's latest store reading timestamp. Note will return 404 error if specified device has no stored readings.
+
+* Path: `/api/device-readings/<device_id_uuid>/latest-timestamp`
+* Method: `GET`
+* Required Params: None
+* Returns on success: JSON, `200 OK`
+
+```json
+{"timestamp": "2012-09-29T16:08:15+0100"}
+```
+
+* Returns on error: JSON, status code varies (also included in response body)
+
+```json
+{
+    "status": "error",
+    "error_message": "Explanation of specific error",
+    "status_code": 400
+}
+```
+
+
+### Retrieve device cumulative count
+
+Retrieve a target device's sum of all stored `count` values. Note will return 404 error if specified device has no stored readings.
+
+* Path: `/api/device-readings/<device_id_uuid>/cumulative-count`
+* Method: `GET`
+* Required Params: None
+* Returns on success: JSON, `200 OK`
+
+```json
+{"cumulative_count": 23}
+```
+
+* Returns on error: JSON, status code varies (also included in response body)
+
+```json
+{
+    "status": "error",
+    "error_message": "Explanation of specific error",
+    "status_code": 400
+}
+```
+
 
 
 ## Structure Summary

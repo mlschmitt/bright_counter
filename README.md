@@ -75,6 +75,29 @@ WIP
 WIP
 
 
-## Todo With More Time
+## Todo With More Time / Next Steps
 
-WIP
+* Move repeated/shared API route handler functionality into a MethodView-style base class; pivot endpoint functions into classes
+    * Would help speed future development as well: handlers for validating only allowed fields/params are provided in the request, all required fields are present, formatting/returning errors, generic exception handler, etc.
+* More tests
+    * I think I covered most happy/error paths in general but strictly through interactions with the API routes. There are no tests directly flexing the underlying device storage classes which I would want to add with more time.
+    * These would be a requirement before building out any additional functionality that interacted with these classes outside of the existing API endpoints. Maybe could even then potentially simplify the API tests, just asserting mocks of the underlying data class functions are called and trusting other tests flex their behavior.
+* Real data store
+    * Current implementation is not thread-safe, in addition to other drawbacks like losing all data when server restarted
+    * Unless project / product requirements prohibit, we should shift to using more resilient data store.
+    * Ideally a SQL database. Could potentially have a `devices` table (if needed), and then `device_readings` to save each new reading. Could simplify Python codebase to achieve current requirements: Unique constraint on `device_id` and `timestamp` columns could block duplicates; `ORDER BY timestamp DESC` and `SUM(count)` could retrieve desired data. If needed perhaps such values could live as explicit columns in `devices`, recalculated on a trigger, depending on performance and usage needs.
+    * If permanent datastore not an option, then memory option like Redis or memcached. Potentially could rely on pickle'ing current Python objects to push as-is into Redis if needed.
+* Investigate performance / memory use
+    * How many device readings are we expecting: dozens? Millions? What's the throughput?
+    * Expectations on response time?
+    * If these are unknown, or currently small but we hope to grow, implement monitoring
+    * If we need to retain in-Python memory datastore, I would want to spend a bit of time benchmarking current implementation
+    * Especially `__slots__` usage: impact on memory use, especially with more info on use case. Is it worth the constraints
+* Implement monitoring with third-party services
+    * Tracing like New Relic to monitor for response times, throughput, capture problem tracelogs
+    * Error tracking (like Sentry)
+    * Log collection (like Papertrail)
+ * Rethink API endpoint structure
+    * Perhaps with more requirements / features it will become clearer if restructuring needed. For example, if other device aggregate-level data needed, perhaps the 2 current endpoints for latest-timestamp and cumulative-count instead are merged into a single endpoint retrieving all top-level data on a target device with a query param to limit returned fields
+    * Or, if needs arise that multiple device data need to be returned, perhaps `device_id` shifts to a query param supporting multiple values
+    * Ideally I could ask a PM such "near-future needs" questions to try to get on the right foot from the getgo

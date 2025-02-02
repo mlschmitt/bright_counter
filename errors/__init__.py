@@ -9,7 +9,7 @@ class InvalidDeviceID(Exception):
         self.status_code = 400
 
 class InvalidReadingTimestamp(Exception):
-    def __init__(self, message="Field 'readings' contains invalid 'timestamp' value."):
+    def __init__(self, message="Field 'readings' contains invalid 'timestamp' value. Must be ISO-8061 timestamp string."):
         self.message = message
         self.status_code = 400
 

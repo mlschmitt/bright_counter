@@ -24,10 +24,10 @@ def device_readings_create():
     device_id = provided_data.get("id", None)
     readings = provided_data.get("readings", None)
     if not device_id:
-        return error_response("Field 'id' is required")
+        return error_response("Field 'id' is required.")
 
     if not readings:
-        return error_response("Field 'readings' is required")
+        return error_response("Field 'readings' is required.")
 
     try:
         readings_accessor.save_batch_for_device(device_id, readings)
@@ -38,7 +38,7 @@ def device_readings_create():
             raise e
         return error_response("Unknown error occurred")
 
-    return jsonify({"status": "ok"})
+    return jsonify({"status": "ok"}), 201
 
 
 # For GETs, opted for placing device_id in URL path as it feels like a targeted resource lookup with

@@ -146,16 +146,36 @@ Retrieve a target device's sum of all stored `count` values. Note will return 40
 
 ## Structure Summary
 
-WIP
+```
+- app.py -- Overall Flask app
+- api/ -- API endpoint route definitions & handlers
+- db/ -- Readings data store with handlers on inserting, retrieval
+- errors/ -- Custom error exceptions
+- tests/ -- pytest unit tests
+```
+
+At top-level, `app.py` controls creating & booting the overall Flask application. Docker files, requirements also defined here.
+
+Directory `api` contains API endpoint handlers and helper functionality. Code here does light validation of input data and captures any errors to provide clean JSON responses, otherwise just interacts with data store code. Set up as Flask blueprint - I like doing this to keep the primary `app.py` file lean and offer easy expansion later. Can lean on creating new blueprints if we want to section up the API endpoints (device-readings vs some other future feature) or perhaps cut off new versions. 
+
+Directory `db` contains code for controlling the device reading datastores. Offers an accessor class that the API endpoint route handlers interact with, providing a layer of validation/consistent parsing for inserting and retrieving data out of the store. Holds all device reading data as an in-memory dictionary. This directory also contains additional classes `DeviceEntry` (housing all reading data for a single device) and `DeviceReading` (representing a single reading instance for a given device).  Ideally much of this code could be removed if pivoting to Redis/database datastore, but accessor class/methods could be retained where possible for minimal changes to API endpoint handlers.
+
+Directory `errors` contains light custom error classes which I lean on primarily to yield specific, informative error messages to API users.
+
+Directory `tests` contains all tests. Within mimics project structure, so currently includes `api` directory with tests on API route handlers (and underlying datastore). `db` directory would be created with more time (see below)
 
 
 ## Todo With More Time / Next Steps
 
 * Move repeated/shared API route handler functionality into a MethodView-style base class; pivot endpoint functions into classes
-    * Would help speed future development as well: handlers for validating only allowed fields/params are provided in the request, all required fields are present, formatting/returning errors, generic exception handler, etc.
+    * Could incorporate/replace the `helpers.py` functionality
+    * Could include handlers for validating only allowed fields/params are provided in the request, all required fields are present, formatting/returning errors, generic exception handler, etc.
+    * If authentication needed, could be added to such a base class as well
+    * Would help speed future development
 * More tests
     * I think I covered most happy/error paths in general but strictly through interactions with the API routes. There are no tests directly flexing the underlying device storage classes which I would want to add with more time.
     * These would be a requirement before building out any additional functionality that interacted with these classes outside of the existing API endpoints. Maybe could even then potentially simplify the API tests, just asserting mocks of the underlying data class functions are called and trusting other tests flex their behavior.
+    * Similar for custom error classes: if their functionality is extended beyond my simple implementation here, we'd want to flex that as well
 * Real data store
     * Current implementation is not thread-safe, in addition to other drawbacks like losing all data when server restarted
     * Unless project / product requirements prohibit, we should shift to using more resilient data store.

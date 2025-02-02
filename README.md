@@ -187,6 +187,9 @@ Directory `tests` contains all tests. Within mimics project structure, so curren
     * If these are unknown, or currently small but we hope to grow, implement monitoring
     * If we need to retain in-Python memory datastore, I would want to spend a bit of time benchmarking current implementation
     * Especially `__slots__` usage: impact on memory use, especially with more info on use case. Is it worth the constraints
+* Clarify in-the-weeds behavior with PM
+    * In particular: if multiple readings are provided in a request with a mix of invalid/valid - should all be rejected? Should we save the valid ones? And if so, do we need to include additional info in the API response indicating which readings were not saved? (Current implementation assumes all should be rejected.)
+    * Additionally, if reading with duplicate timestamp, should any error or note be returned in API response?
 * Implement monitoring with third-party services
     * Tracing like New Relic to monitor for response times, throughput, capture problem tracelogs
     * Error tracking (like Sentry)

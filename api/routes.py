@@ -36,6 +36,7 @@ def device_readings_create():
     except Exception as e:
         if app.debug:
             raise e
+        # TODO: Would still want some logging here even if we're trying to obfuscate errors from users
         return error_response("Unknown error occurred")
 
     return jsonify({"status": "ok"}), 201
@@ -54,6 +55,7 @@ def device_readings_latest_timestamp(device_id):
     except Exception as e:
         if app.debug:
             raise e
+        # TODO: Would still want some logging here even if we're trying to obfuscate errors from users
         return error_response("Unknown error occurred")
     robj = {"timestamp": latest_timestamp.strftime(DeviceReading.timestamp_format())}
     return jsonify(robj)
@@ -68,6 +70,7 @@ def device_readings_cumulative_count(device_id):
     except Exception as e:
         if app.debug:
             raise e
+        # TODO: Would still want some logging here even if we're trying to obfuscate errors from users
         return error_response("Unknown error occurred")
     robj = {"cumulative_count": sum_count}
     return jsonify(robj)

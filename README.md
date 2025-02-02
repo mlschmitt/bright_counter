@@ -54,6 +54,19 @@ pytest
 
 ## Endpoints
 
+### Uptime Check
+
+Verify server is up and accessible.
+
+* Path: `/api/ping`
+* Method: `GET`
+* Required Params: None
+* Returns: JSON
+
+```json
+{"status": "ok"}
+```
+
 WIP
 
 
